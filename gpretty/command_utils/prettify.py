@@ -1,5 +1,5 @@
+import argparse
 import logging
-import optparse
 
 
 class ColourMixin(object):
@@ -42,10 +42,26 @@ class ColourMixin(object):
 
 class ColouriseCommand(ColourMixin):
     """Mix this into management commands to provide nice colouring control"""
-    colourise_option = optparse.make_option(
-        '--nocolourise', dest='colourise', action='store_false',
-        help='Do not colourise output'
-    )
+    @property
+    def default_parser(self):
+        """
+        Set up an argument parser with the --nocolourise flag
+
+        You can then use this as a parent for your own argument parser to
+        easily include this flag via `ArgumentParser(parents=[...])`.
+
+        Pass all the arguments to `handle_colourise` to action those args,
+        or manually pass the colourise boolean if preferred.
+        """
+        if not hasattr(self, '_default_parser'):
+            p = argparse.ArgumentParser(add_help=False)
+            p.add_argument(
+                '--nocolourise', dest='colourise', action='store_false',
+                help='Do not colourise output'
+            )
+            self._default_parser = p
+
+        return self._default_parser
 
     @property
     def log_handler(outer):
@@ -85,7 +101,11 @@ class ColouriseCommand(ColourMixin):
         )
 
     def handle_colourise(self, *args, **options):
-        """Strip colours if colourise is false"""
+        """
+        Strip colours if colourise is false. This assumes you're passing all
+        the parsed arguments. We'll only look for the colourise argument,
+        provided by `default_parser`
+        """
         if options.get('colourise', True) is False:
             self._deactivate_colours()
         else:
