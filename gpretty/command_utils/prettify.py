@@ -1,5 +1,7 @@
 import argparse
 import logging
+import sys
+import traceback
 
 
 class ColourMixin(object):
@@ -74,15 +76,20 @@ class ColouriseCommand(ColourMixin):
             """
             def emit(self, record):
                 msg = record.msg % record.args
-                if record.exc_info is not None:
-                    msg = '%s %s' % (msg, record.exc_info)
 
+                col = 'red'
                 if record.levelno < logging.INFO:
-                    outer._print(msg, 'grey')
+                    col = 'grey'
                 elif record.levelno < logging.ERROR:
-                    outer._print(msg, 'yellow')
-                else:
-                    outer._print(msg, 'red')
+                    col = 'yellow'
+
+                sys.stdout.write(outer._colours[col])
+                print msg
+                if record.exc_info is not None:
+                    etype, v, tb = record.exc_info
+                    traceback.print_exception(etype, v, tb)
+
+                print outer._colours['reset']
 
         outer._log_handler = getattr(
             outer, '_log_handler', None
