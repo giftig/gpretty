@@ -28,8 +28,10 @@ class ColourMixin(object):
         Insert colours into the given data dict. Intended to allow easy
         formatting of colourised strings. Used something like:
 
-            print '%(red)sUh oh... %(msg)s%(reset)s' % (
-                self.with_colours({'msg': 'Something bad happened!'})
+            print(
+                '{red}Uh oh... {msg}{reset}'.format(
+                    self.with_colours({'msg': 'Something bad happened!'})
+                )
             )
         """
         data.update(self._colours)
@@ -114,4 +116,4 @@ class ColouriseCommand(ColourMixin):
             self._activate_colours()
 
     def _print(self, msg, colour):
-        print self.colourise(msg, colour)
+        print(self.colourise(msg, colour))
