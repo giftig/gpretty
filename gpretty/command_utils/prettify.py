@@ -86,12 +86,12 @@ class ColouriseCommand(ColourMixin):
                     col = 'yellow'
 
                 sys.stdout.write(outer._colours[col])
-                print msg
+                print(msg)
                 if record.exc_info is not None:
                     etype, v, tb = record.exc_info
                     traceback.print_exception(etype, v, tb)
 
-                print outer._colours['reset']
+                sys.stdout.write(outer._colours['reset'])
 
         outer._log_handler = getattr(
             outer, '_log_handler', None

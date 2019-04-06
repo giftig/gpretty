@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='gpretty',
-    version='0.2.0',
+    version='0.2.1',
     packages=['gpretty', 'gpretty.command_utils'],
     description='A collection of tools for prettifying commands',
     author='Rob Moore',
